@@ -48,7 +48,18 @@ def about(topic):
   assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
 
   # BEGIN PROBLEM 2
-  ...
+  def filter_about(paragraph):
+    words = list(paragraph.split())
+
+    for x in words:
+      print(words[x])
+      for y in topic:
+        print(topic[y])
+        if words[x] == topic[y]:
+          return True
+        else:
+          return False
+  return filter_about
   # END PROBLEM 2
 
 
