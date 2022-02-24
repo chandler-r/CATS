@@ -1,4 +1,5 @@
 """Typing test implementation"""
+from os import remove
 from utils import lower, split, remove_punctuation, lines_from_file
 from ucb import main, interact, trace
 from datetime import datetime
@@ -60,7 +61,18 @@ def about(topic):
   assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
 
   # BEGIN PROBLEM 2
-  ...
+  def filter_about(paragraph):
+    words = paragraph.split()
+    words_lower = [lower(x) for x in words]
+    for x in words_lower:
+      for y in topic:
+        x = remove_punctuation(x)
+        y = remove_punctuation(y)
+        if(x == y):
+          return True
+    return False
+
+  return filter_about
   # END PROBLEM 2
 
 
