@@ -20,6 +20,7 @@ def choose(paragraphs, select, k):
 
   >>> ps = ['hi', 'how are you', 'fine']
   >>> s = lambda p: len(p) <= 4
+  const fn = (p) => p.length <= 4
   >>> choose(ps, s, 0)
   'hi'
   >>> choose(ps, s, 1)
@@ -27,8 +28,19 @@ def choose(paragraphs, select, k):
   >>> choose(ps, s, 2)
   ''
   """
+  '''
+  lambda- anonymous fns
+  fn2 lambda p,q: p > q
+  higher order- take fn as param or return fn
+
+  words = filter(s, ps) >>> ["hi", "fine"]
+  '''
   # BEGIN PROBLEM 1
-  ...
+  filteredLst = list(filter(select, paragraphs))
+  if(len(filteredLst) < k+1):
+    return ""
+  else:
+    return filteredLst[k]
   # END PROBLEM 1
 
 
