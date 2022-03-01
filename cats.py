@@ -150,7 +150,24 @@ def autocorrect(typed_word, word_list, diff_function, limit):
   'testing'
   """
   # BEGIN PROBLEM 5
-  ...
+  min = limit
+  min_word = ""
+  for elem in word_list:
+    #diffs.append(diff_function(elem, typed_word))
+    diff = diff_function(elem, typed_word, limit)
+    if(min_word == typed_word):
+      if(diff <= min):
+        min = diff
+        min_word = elem
+    elif(diff < min):
+      min = diff
+      min_word = elem
+    '''
+    print(diff)
+    print("min")
+    print(min)
+    '''
+  return min_word
   # END PROBLEM 5
 
 
