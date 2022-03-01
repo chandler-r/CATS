@@ -1,0 +1,6 @@
+.ok_history
+.ok_storage.db
+.DS_Store
+__pycache__/
+.vscode/
+tests/__pycache__/
