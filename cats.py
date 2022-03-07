@@ -1,5 +1,6 @@
 """Typing test implementation"""
 from os import remove
+from pkgutil import iter_modules
 from utils import lower, split, remove_punctuation, lines_from_file
 from ucb import main, interact, trace
 from datetime import datetime
@@ -208,27 +209,26 @@ def sphinx_swaps(start, goal, limit):
   5
   """
   # BEGIN PROBLEM 6
-  start_len = len(start)
-  goal_len = len(goal)
-  len_diff = abs(len(start)-len(goal))
-  diff_count = len_diff
-
-  if(start_len == 0 or goal_len == 0):
-    return len_diff
-  else:
-    if(start[0] == goal[0]):
-      if(0 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
-        return limit + 1
-      return 0 + sphinx_swaps(start[1:], goal[1:], limit)
+  ogLimit = limit
+  def sphinx_helper(start, goal, limit):
+    start_len = len(start)
+    goal_len = len(goal)
+    len_diff = abs(len(start)-len(goal))
+    if(start_len == 0 or goal_len == 0):  
+      return len_diff
+    elif(limit < 0):
+      return ogLimit + 1
     else:
-      if(1 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
-        return limit + 1
-      return 1 + sphinx_swaps(start[1:], goal[1:], limit)
-
+   
+      if(start[0] == goal[0]):
+        return 0 + sphinx_helper(start[1:], goal[1:], limit)
+      else:
+        return 1 + sphinx_helper(start[1:], goal[1:], limit-1)
+  return sphinx_helper(start, goal, limit)
   
-  
+ 
   # END PROBLEM 6
-
+#print(sphinx_swaps('slurp', 'slurpn', 6))
 
 def minimum_mewtations(start, goal, limit):
   """A diff function that computes the edit distance from START to GOAL.
@@ -248,9 +248,43 @@ def minimum_mewtations(start, goal, limit):
   3
   """
   # BEGIN PROBLEM 7
-  ...
-  # END PROBLEM 7
+  ogLimit = limit
+  def sphinx_helper(start, goal, limit):
+    start_len = len(start)
+    goal_len = len(goal)
+    len_diff = abs(len(start)-len(goal))
+    if(goal_len == 0):  
+      return start_len
+    elif(start_len == 0):
+      return goal_len
+    elif(limit < 0):
+      return ogLimit + 1
+    else:
+      if(start[0] == goal[0]):
+        return 0 + sphinx_helper(start[1:], goal[1:], limit)
+      else:
+        add = goal[0] + start
+        substitute = goal[0] + start[1:]
+        delete = start[1:]
 
+        #return 1 + min(sphinx_helper(add, goal, limit-1), sphinx_helper(substitute, goal, limit-1), sphinx_helper(delete, goal, limit-1))
+  return sphinx_helper(start, goal, limit)
+  # END PROBLEM 7
+'''
+  ckiteus
+  kittens
+
+  -> 1 + kiteus
+         kittens -> 0 + iteus
+                        ittens
+
+  -> 1 + kkiteus
+         kittens -> 0 + kiteus
+                        ittens
+  -> 1 + kckiteus
+         kittens
+
+'''
 
 # STOP! #
 # YOU DO NOT NEED TO EDIT ANY CODE BEYOND THIS POINT! #
