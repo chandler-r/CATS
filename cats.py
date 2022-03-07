@@ -167,25 +167,23 @@ def autocorrect(typed_word, word_list, diff_function, limit):
   """
   # BEGIN PROBLEM 5
   min = limit
-  min_word = ""
   for elem in word_list:
     #diffs.append(diff_function(elem, typed_word))
     diff = diff_function(elem, typed_word, limit)
-    if(min_word == typed_word):
-      if(diff <= min):
-        min = diff
-        min_word = elem
-    elif(diff < min):
+   
+    if(elem == typed_word):
+      return typed_word
+    
+    if(diff < min):
       min = diff
-      min_word = elem
-    '''
-    print(diff)
-    print("min")
-    print(min)
-    '''
-  return min_word
+  
+  filter_list = [elem for elem in word_list if diff_function(elem, typed_word, limit) <= min]
+  
+  target_word = typed_word
+  if(filter_list):
+    target_word = filter_list[0]
+  return target_word
   # END PROBLEM 5
-
 
 def sphinx_swaps(start, goal, limit):
   """A diff function for autocorrect that determines how many letters
@@ -210,7 +208,25 @@ def sphinx_swaps(start, goal, limit):
   5
   """
   # BEGIN PROBLEM 6
-  ...
+  start_len = len(start)
+  goal_len = len(goal)
+  len_diff = abs(len(start)-len(goal))
+  diff_count = len_diff
+
+  if(start_len == 0 or goal_len == 0):
+    return len_diff
+  else:
+    if(start[0] == goal[0]):
+      if(0 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
+        return limit + 1
+      return 0 + sphinx_swaps(start[1:], goal[1:], limit)
+    else:
+      if(1 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
+        return limit + 1
+      return 1 + sphinx_swaps(start[1:], goal[1:], limit)
+
+  
+  
   # END PROBLEM 6
 
 
