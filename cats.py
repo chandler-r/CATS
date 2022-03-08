@@ -102,7 +102,7 @@ def accuracy(typed, reference):
   """
   typed_words = split(typed)
   reference_words = split(reference)
-  counter = 0;
+  counter = 0
   length = 0
 
   # BEGIN PROBLEM 3
@@ -114,7 +114,9 @@ def accuracy(typed, reference):
   for i in range(0 , length):
     if(typed_words[i] == reference_words[i]):
       counter+=1
-  if len(typed_words) == 0 & len(reference_words) != 0:
+  if len(typed_words) == 0 and len(reference_words) == 0:
+    counter = 1.0
+  elif len(typed_words) == 0:
     counter = 0.0
   else:
     counter/=len(typed_words)
@@ -267,7 +269,7 @@ def minimum_mewtations(start, goal, limit):
         substitute = goal[0] + start[1:]
         delete = start[1:]
 
-        #return 1 + min(sphinx_helper(add, goal, limit-1), sphinx_helper(substitute, goal, limit-1), sphinx_helper(delete, goal, limit-1))
+        return 1 + min(sphinx_helper(add, goal, limit-1), sphinx_helper(substitute, goal, limit-1), sphinx_helper(delete, goal, limit-1))
   return sphinx_helper(start, goal, limit)
   # END PROBLEM 7
 '''
