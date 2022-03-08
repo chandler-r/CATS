@@ -171,7 +171,7 @@ def autocorrect(typed_word, word_list, diff_function, limit):
   # BEGIN PROBLEM 5
   min = limit
   for elem in word_list:
-    #diffs.append(diff_function(elem, typed_word))
+    # Initial for loop checks for the original typed word in the word list and finds the smallest diff existent among the words 
     diff = diff_function(elem, typed_word, limit)
    
     if(elem == typed_word):
@@ -180,7 +180,7 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     if(diff < min):
       min = diff
   
-  filter_list = [elem for elem in word_list if diff_function(elem, typed_word, limit) <= min]
+  filter_list = [elem for elem in word_list if diff_function(elem, typed_word, limit) <= min] # Solely contains words fitting the min diff criteria 
   
   target_word = typed_word
   if(filter_list):
@@ -213,19 +213,25 @@ def sphinx_swaps(start, goal, limit):
   # BEGIN PROBLEM 6
   ogLimit = limit
   def sphinx_helper(start, goal, limit):
+    '''
+    The helper function allows the original limit to be accessed for the sake of returning a number greater than the original limit 
+    (since the limit is modified throughout the recursion) upon hitting the limit- otherwise the original function signature would have to be modified 
+    '''
     start_len = len(start)
     goal_len = len(goal)
     len_diff = abs(len(start)-len(goal))
     if(start_len == 0 or goal_len == 0):  
+      # Return the difference in lengths (remaining edits) if either string becomes empty 
       return len_diff
     elif(limit < 0):
       return ogLimit + 1
     else:
-   
+      # Return the number of edits that must be made, plus the edits for the smaller case of reducing the words by their first characters 
       if(start[0] == goal[0]):
         return 0 + sphinx_helper(start[1:], goal[1:], limit)
       else:
         return 1 + sphinx_helper(start[1:], goal[1:], limit-1)
+        # When making an edit, the limit is reduced to account for that edit 
   return sphinx_helper(start, goal, limit)
   
  
@@ -256,6 +262,7 @@ def minimum_mewtations(start, goal, limit):
     goal_len = len(goal)
     len_diff = abs(len(start)-len(goal))
     if(goal_len == 0):  
+      # Return the number of excess characters (depending on which word is emptied first) as necessary edits 
       return start_len
     elif(start_len == 0):
       return goal_len
@@ -264,12 +271,17 @@ def minimum_mewtations(start, goal, limit):
     else:
       if(start[0] == goal[0]):
         return 0 + sphinx_helper(start[1:], goal[1:], limit)
+        # If the first characters of the words match, then no edits need to be made here; proceed to the next first characters 
       else:
         add = goal[0] + start
         substitute = goal[0] + start[1:]
         delete = start[1:]
 
         return 1 + min(sphinx_helper(add, goal, limit-1), sphinx_helper(substitute, goal, limit-1), sphinx_helper(delete, goal, limit-1))
+        '''
+        Evaluate the recursive routes resulting from adding the current character of the correct word, substituting the current character, 
+        and deleting the current character, and return the one that results in the minimum number of edits 
+        '''
   return sphinx_helper(start, goal, limit)
   # END PROBLEM 7
 '''
