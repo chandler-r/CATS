@@ -1,5 +1,6 @@
 """Typing test implementation"""
 from os import remove
+from pkgutil import iter_modules
 from utils import lower, split, remove_punctuation, lines_from_file
 from ucb import main, interact, trace
 from datetime import datetime
@@ -101,7 +102,7 @@ def accuracy(typed, reference):
   """
   typed_words = split(typed)
   reference_words = split(reference)
-  counter = 0;
+  counter = 0
   length = 0
 
   # BEGIN PROBLEM 3
@@ -113,7 +114,9 @@ def accuracy(typed, reference):
   for i in range(0 , length):
     if(typed_words[i] == reference_words[i]):
       counter+=1
-  if len(typed_words) == 0 & len(reference_words) != 0:
+  if len(typed_words) == 0 and len(reference_words) == 0:
+    counter = 1.0
+  elif len(typed_words) == 0:
     counter = 0.0
   else:
     counter/=len(typed_words)
@@ -168,7 +171,7 @@ def autocorrect(typed_word, word_list, diff_function, limit):
   # BEGIN PROBLEM 5
   min = limit
   for elem in word_list:
-    #diffs.append(diff_function(elem, typed_word))
+    # Initial for loop checks for the original typed word in the word list and finds the smallest diff existent among the words 
     diff = diff_function(elem, typed_word, limit)
    
     if(elem == typed_word):
@@ -177,7 +180,7 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     if(diff < min):
       min = diff
   
-  filter_list = [elem for elem in word_list if diff_function(elem, typed_word, limit) <= min]
+  filter_list = [elem for elem in word_list if diff_function(elem, typed_word, limit) <= min] # Solely contains words fitting the min diff criteria 
   
   target_word = typed_word
   if(filter_list):
@@ -208,27 +211,32 @@ def sphinx_swaps(start, goal, limit):
   5
   """
   # BEGIN PROBLEM 6
-  start_len = len(start)
-  goal_len = len(goal)
-  len_diff = abs(len(start)-len(goal))
-  diff_count = len_diff
-
-  if(start_len == 0 or goal_len == 0):
-    return len_diff
-  else:
-    if(start[0] == goal[0]):
-      if(0 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
-        return limit + 1
-      return 0 + sphinx_swaps(start[1:], goal[1:], limit)
+  ogLimit = limit
+  def sphinx_helper(start, goal, limit):
+    '''
+    The helper function allows the original limit to be accessed for the sake of returning a number greater than the original limit 
+    (since the limit is modified throughout the recursion) upon hitting the limit- otherwise the original function signature would have to be modified 
+    '''
+    start_len = len(start)
+    goal_len = len(goal)
+    len_diff = abs(len(start)-len(goal))
+    if(start_len == 0 or goal_len == 0):  
+      # Return the difference in lengths (remaining edits) if either string becomes empty 
+      return len_diff
+    elif(limit < 0):
+      return ogLimit + 1
     else:
-      if(1 + sphinx_swaps(start[1:], goal[1:], limit) > limit):
-        return limit + 1
-      return 1 + sphinx_swaps(start[1:], goal[1:], limit)
-
+      # Return the number of edits that must be made, plus the edits for the smaller case of reducing the words by their first characters 
+      if(start[0] == goal[0]):
+        return 0 + sphinx_helper(start[1:], goal[1:], limit)
+      else:
+        return 1 + sphinx_helper(start[1:], goal[1:], limit-1)
+        # When making an edit, the limit is reduced to account for that edit 
+  return sphinx_helper(start, goal, limit)
   
-  
+ 
   # END PROBLEM 6
-
+#print(sphinx_swaps('slurp', 'slurpn', 6))
 
 def minimum_mewtations(start, goal, limit):
   """A diff function that computes the edit distance from START to GOAL.
@@ -248,9 +256,49 @@ def minimum_mewtations(start, goal, limit):
   3
   """
   # BEGIN PROBLEM 7
-  ...
-  # END PROBLEM 7
+  ogLimit = limit
+  def sphinx_helper(start, goal, limit):
+    start_len = len(start)
+    goal_len = len(goal)
+    len_diff = abs(len(start)-len(goal))
+    if(goal_len == 0):  
+      # Return the number of excess characters (depending on which word is emptied first) as necessary edits 
+      return start_len
+    elif(start_len == 0):
+      return goal_len
+    elif(limit < 0):
+      return ogLimit + 1
+    else:
+      if(start[0] == goal[0]):
+        return 0 + sphinx_helper(start[1:], goal[1:], limit)
+        # If the first characters of the words match, then no edits need to be made here; proceed to the next first characters 
+      else:
+        add = goal[0] + start
+        substitute = goal[0] + start[1:]
+        delete = start[1:]
 
+        return 1 + min(sphinx_helper(add, goal, limit-1), sphinx_helper(substitute, goal, limit-1), sphinx_helper(delete, goal, limit-1))
+        '''
+        Evaluate the recursive routes resulting from adding the current character of the correct word, substituting the current character, 
+        and deleting the current character, and return the one that results in the minimum number of edits 
+        '''
+  return sphinx_helper(start, goal, limit)
+  # END PROBLEM 7
+'''
+  ckiteus
+  kittens
+
+  -> 1 + kiteus
+         kittens -> 0 + iteus
+                        ittens
+
+  -> 1 + kkiteus
+         kittens -> 0 + kiteus
+                        ittens
+  -> 1 + kckiteus
+         kittens
+
+'''
 
 # STOP! #
 # YOU DO NOT NEED TO EDIT ANY CODE BEYOND THIS POINT! #
